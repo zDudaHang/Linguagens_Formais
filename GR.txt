@@ -1,0 +1,14 @@
+*GR
+*NaoTerminais
+A B
+*Terminais
+a b
+*SimboloInicial
+S
+*Producoes
+S->aA
+S->bB
+A->a
+A->aA
+B->b
+B->bB
