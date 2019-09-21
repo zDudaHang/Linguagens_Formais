@@ -1,6 +1,7 @@
 from structures.AutomatoFinito import Automato_Finito
 from structures.GramaticaRegular import Gramatica_Regular
 from structures.ExpressaoRegular import Expressao_Regular
+from src.Operacoes import *
 
 import os
 from os import path
@@ -62,7 +63,7 @@ class Leitor:
         gramatica.arrumar_producoes()
 
         # ========================== DEBUG
-        # print(gramatica.producoes)
+        print(gramatica.producoes)
         # ========================== DEBUG
 
         return gramatica
@@ -130,12 +131,12 @@ if __name__ == "__main__":
         print('Não deu :<')
         exit()
 
-    arquivo = argv[1]
+    arquivo1 = argv[1]
 
-    if not path.isfile(arquivo):
+    if not path.isfile(arquivo1):
         print('Arquivo não encontrado')
         exit()
 
-    leitor = Leitor(arquivo)
-    af = leitor.ler_arquivo()
-    af.determinizar()
+    leitor1 = Leitor(arquivo1)
+    AF_R = leitor1.ler_arquivo()
+    transformar_em_GR(AF_R)

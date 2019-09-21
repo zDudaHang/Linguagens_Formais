@@ -37,7 +37,6 @@ class Automato_Finito:
             for estado in self.estados:
                 self.transicoes[estado] = [None]*len(self.alfabeto)
 
-        # self.encontrar_estados_novos(lista_epsilons, transicoes_referencia)
         self.definir_novas_transicoes(e_fecho, transicoes_referencia)
 
         self.mostrar_transicoes()
@@ -112,6 +111,13 @@ class Automato_Finito:
                         self.verificar_estado_de_aceitacao(estado_a_transitar)
 
                     self.transicoes[estado][j] = estado_a_transitar
+
+    def negar(self):
+        novos_estados_de_aceitacao = []
+        for estado in self.estados:
+            if estado not in self.estados_aceitacao:
+                novos_estados_de_aceitacao.append(estado)
+        self.estados_aceitacao = novos_estados_de_aceitacao
 
     def mostrar_transicoes(self):
         print("======= Estados do AF =======")
