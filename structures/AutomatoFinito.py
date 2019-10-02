@@ -1,12 +1,15 @@
-class Automato_Finito:
+class AutomatoFinito:
     def __init__(self, estados, alfabeto, transicoes, estado_inicial, estados_aceitacao):
         self.estados = estados
         self.alfabeto = alfabeto
         self.transicoes = transicoes
+        # Ajusta as transições para terem forma de dicionário
+        if type(transicoes) != dict:
+            self._arrumar_transicoes()
         self.estado_inicial = estado_inicial
         self.estados_aceitacao = estados_aceitacao
 
-    def arrumar_transicoes(self):
+    def _arrumar_transicoes(self):
         novas_transicoes = {}
         for estado in self.estados:
             novas_transicoes[estado] = []
@@ -19,16 +22,15 @@ class Automato_Finito:
         self.transicoes = novas_transicoes
 
     def determinizar(self):
-
         transicoes_referencia = self.transicoes
 
-        (e_fecho,sem_transicoes_e) = self.calcular_e_fecho()
+        (e_fecho, tem_e_fecho) = self.calcular_e_fecho()
 
-        if(e_fecho[self.estado_inicial] != self.estado_inicial):
+        if e_fecho[self.estado_inicial] != self.estado_inicial:
             self.estado_inicial = e_fecho[self.estado_inicial]
             self.verificar_estado_de_aceitacao(self.estado_inicial)
 
-        if (not sem_transicoes_e):
+        if tem_e_fecho:
             self.estados = [self.estado_inicial]
             self.transicoes = {}
             self.transicoes[self.estado_inicial] = [None]*len(self.alfabeto)
@@ -39,7 +41,6 @@ class Automato_Finito:
 
         self.definir_novas_transicoes(e_fecho, transicoes_referencia)
 
-        self.mostrar_transicoes()
 
     def calcular_e_fecho(self):
         e_fecho = self.inicializar_e_fecho()
@@ -49,15 +50,15 @@ class Automato_Finito:
             try:
                 transicao = self.transicoes[estado][j]
             except IndexError:
-                return (e_fecho,True)
+                return (e_fecho, False)
             else:
                 estados.append(estado)
                 if (transicao != 'V'):
                     transicao = transicao.split(',')
                     estados.extend(transicao)
                 estados.sort()
-                e_fecho[estado] = ','.join(map(str,estados))
-        return (e_fecho,False)
+                e_fecho[estado] = ','.join(set(map(str, estados)))
+        return (e_fecho, True)
 
     def inicializar_e_fecho(self):
         e_fecho = {}
@@ -68,7 +69,7 @@ class Automato_Finito:
     def verificar_estado_de_aceitacao(self, transicao):
         estados = transicao.split(',')
         for estado in estados:
-            if estado in self.estados_aceitacao :
+            if estado in self.estados_aceitacao:
                 self.estados_aceitacao.append(transicao)
 
     def definir_novas_transicoes(self, e_fecho, transicoes_referencia):
@@ -76,7 +77,7 @@ class Automato_Finito:
         estado_novo_encontrado = 0
 
         for estado in self.estados:
-            for j in range(len(self.alfabeto)):
+            for j, caracter in enumerate(self.alfabeto):
                 if self.transicoes[estado][j] == None:
                     # Pegando todos os estados, ex: {q0,q1,q2} -> [q0,q1,q2]
                     # para recuperar suas transicoes
@@ -85,7 +86,8 @@ class Automato_Finito:
                     # Pegar transicoes
                     lista_estados_a_transitar = []
                     for estado_lista in lista_estados:
-                        lista_estados_a_transitar.append(transicoes_referencia[estado_lista][j])
+                        lista_estados_a_transitar.append(
+                            transicoes_referencia[estado_lista][j])
 
                     # Verificar as transicoes por E nos estados da nova_transicao
                     estado_a_transitar = []
@@ -94,21 +96,29 @@ class Automato_Finito:
                             if (len(estado_transicao.split(',')) > 1):
                                 estado_transicao = estado_transicao.split(',')
                                 for e in estado_transicao:
-                                    estado_a_transitar.extend(e_fecho[e].split(','))
+                                    estado_a_transitar.extend(
+                                        e_fecho[e].split(','))
                             else:
-                                estado_a_transitar.extend(e_fecho[estado_transicao].split(','))
+                                estado_a_transitar.extend(
+                                    e_fecho[estado_transicao].split(','))
 
                     estado_a_transitar = set(estado_a_transitar)
                     estado_a_transitar = list(estado_a_transitar)
                     estado_a_transitar.sort()
-                    estado_a_transitar = ','.join(map(str,estado_a_transitar))
+                    estado_a_transitar = ','.join(map(str, estado_a_transitar))
 
-                    if estado_a_transitar not in self.estados:
+                    # Evitando adicionar estados vazios a lista de estados
+                    if estado_a_transitar not in self.estados and estado_a_transitar:
                         estado_novo_encontrado = 1
                         nova_transicao = [None]*len(self.alfabeto)
                         self.estados.append(estado_a_transitar)
-                        self.transicoes[estado_a_transitar] = [None]*len(self.alfabeto)
+                        self.transicoes[estado_a_transitar] = [
+                            None]*len(self.alfabeto)
                         self.verificar_estado_de_aceitacao(estado_a_transitar)
+
+                    # Formaliza o estado vazio como V
+                    if not estado_a_transitar:
+                        estado_a_transitar = 'V'
 
                     self.transicoes[estado][j] = estado_a_transitar
 
@@ -126,7 +136,39 @@ class Automato_Finito:
             if estado == self.estado_inicial:
                 texto += '-> '
             if estado in self.estados_aceitacao:
-                texto += '* '
+                texto += ' * '
+
             texto += estado + ': '
             transicoes = ' | '.join(map(str, self.transicoes[estado]))
             print(texto + transicoes)
+
+    def exportar(self, filename):
+        t = f'*AF\n*Estados\n' +\
+            f'{" ".join(self.estados)}\n' + \
+            f'*EstadoInicial\n{self.estado_inicial}\n' + \
+            '*EstadosDeAceitacao\n' +\
+            f'{" ".join(self.estados_aceitacao)}\n' +\
+            '*Alfabeto\n' +\
+            f'{" ".join(self.alfabeto)}\n' + \
+            '*Transicoes\n'
+
+        for trans in self.transicoes.values():
+            t += ' '.join(trans) + '\n'
+
+        with open(filename, 'w') as f:
+            f.write(t)
+
+    def reconhecer(self, sentenca):
+        # Opera apenas com AF determinizado
+        self.determinizar()
+        # Checa se todos os caracteres estão no alfabeto
+        if not all([c in self.alfabeto for c in sentenca]):
+            return False
+
+        current_state = self.estado_inicial
+        for c in sentenca:
+            i = self.alfabeto.index(c)
+            current_state = self.transicoes[current_state][i]
+
+        return current_state in self.estados_aceitacao
+

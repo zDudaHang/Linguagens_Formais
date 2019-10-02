@@ -1,14 +1,13 @@
 *AF
 *Estados
-q0 q1 q2
+p q r
 *EstadoInicial
-q0
+p
 *EstadosDeAceitacao
-q2
+r
 *Alfabeto
-a b
-
+a b c
 *Transicoes
-q1 V q2
-q2 q2 q0
-q2 q2 V
+V q r p,q
+p r p,q V
+V V V V

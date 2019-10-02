@@ -1,5 +1,5 @@
-from structures.AutomatoFinito import Automato_Finito
-from structures.GramaticaRegular import Gramatica_Regular
+from structures.AutomatoFinito import AutomatoFinito
+from structures.GramaticaRegular import GramaticaRegular
 
 def uniao(automato_A, automato_B):
     # INICIALIZACAO DAS NOVAS TRANSICOES E ESTADOS DE ACEITACAO
@@ -27,7 +27,7 @@ def uniao(automato_A, automato_B):
     verificar_transicoes_por_e(automato_B, novas_transicoes, novos_estados, qtd_estados_A)
 
     novos_estados.insert(0, novo_estado_inicial)
-    novo_automato = Automato_Finito(novos_estados, automato_A.alfabeto, novas_transicoes, novo_estado_inicial, novos_estados_de_aceitacao)
+    novo_automato = AutomatoFinito(novos_estados, automato_A.alfabeto, novas_transicoes, novo_estado_inicial, novos_estados_de_aceitacao)
 
     return novo_automato
 
@@ -84,32 +84,118 @@ def intersecao(automato_A, automato_B):
     automato_B.negar()
     return uniao(automato_A, automato_B)
 
-def transformar_em_GR(automato):
-    producoes = {}
-    nao_terminais = gerar_nao_terminais(automato)
-    for nao_terminal in nao_terminais:
-        producoes[nao_terminal] = []
-    i = 0
-    for estado in automato.estados:
-        for j in range(0, len(automato.alfabeto)):
-            transicao = automato.transicoes[estado][j]
-            nao_terminal_correspondente = nao_terminais[i]
-            for estado_transicao in transicao.split(','):
-                indice = automato.estados.index(estado_transicao)
-                nao_terminal = nao_terminais[indice]
-                letra = automato.alfabeto[j]
-                producao = letra + nao_terminal
-                producoes[nao_terminal_correspondente].append(producao)
-                if estado_transicao in automato.estados_aceitacao:
-                    producoes[nao_terminal_correspondente].append(letra)
-        i += 1
-    gramatica_regular = Gramatica_Regular(nao_terminais, automato.alfabeto, producoes, nao_terminais[0])
-    return gramatica_regular
 
-def gerar_nao_terminais(automato):
-    nao_terminais = ['S']
-    nao_terminal = 'A'
-    for i in range(0, len(automato.estados) - 1):
-        nao_terminais.append(nao_terminal)
-        nao_terminal = chr(ord(nao_terminal) + 1)
-    return nao_terminais
+def af_para_gr(af: AutomatoFinito):
+    # Gerando alias para os estados
+    a = dict()
+    a[af.estado_inicial] = 'S'
+    letra = 'A'
+    for estado in af.estados:
+        # Pula estado incial que já foi renomeado
+        if estado == af.estado_inicial:
+            continue
+        a[estado] = letra
+        letra = chr(ord(letra) + 1)
+
+    N = list(a.values())
+    T = af.alfabeto
+    S = a[af.estado_inicial]
+    P = []
+    for estado_atual, proximos_estados in af.transicoes.items():
+        for proximo, caracter in zip(proximos_estados, af.alfabeto):
+            if proximo == 'V':
+                continue
+            P.append(f'{a[estado_atual]}->{caracter}{a[proximo]}')
+
+            if proximo in af.estados_aceitacao:
+                P.append(f'{a[estado_atual]}->{caracter}')
+
+
+    # Cria um novo simbolo inicial caso o estado inicial do AF seja
+    # de aceitação
+    if af.estado_inicial in af.estados_aceitacao:
+        S = a[af.estado_inicial] + "'"
+        N.append(S)
+        for prod in P.copy():
+            if prod[0] == a[af.estado_inicial]:
+                P.append(f'{S}{prod[1:]}')
+
+        P.append(f'{S}->&')
+
+    return GramaticaRegular(N, T, P, S)
+
+
+def gr_para_af(gr: GramaticaRegular):
+    # Estados
+    K = gr.nao_terminais
+    novo_simbolo_nao_terminal = 'Z'
+    K.append(novo_simbolo_nao_terminal)
+    # Alfabeto
+    alfabeto = gr.terminais
+    
+    # Estado inicial
+    q0 = gr.simbolo_inicial
+    
+    # Estados de aceitação
+    F = [novo_simbolo_nao_terminal]
+    for nt, p in gr.producoes.items():
+        if nt == gr.simbolo_inicial and '&' in p:
+            F.append(nt)
+            break
+
+    # Transições
+    trans = dict()
+    for simb, prods in gr.producoes.items():
+        for prod in prods:
+            terminal, nao_terminal, e = pegar_simbolos(prod,
+                                                       gr.terminais,
+                                                       gr.nao_terminais)
+            if e:
+                continue
+
+            if (simb, terminal) not in trans.keys():
+                trans[(simb, terminal)] = []
+
+            if nao_terminal is None:
+                trans[(simb, terminal)].append(novo_simbolo_nao_terminal)
+
+            if nao_terminal is not None and terminal is not None:
+                trans[(simb, terminal)].append(nao_terminal)
+
+    for nt in gr.nao_terminais:
+        for t in gr.terminais:
+            if (nt, t) not in trans.keys():
+                trans[(nt, t)] = ['V']
+
+    transicoes = []
+    for nt in gr.nao_terminais:
+        nexts = []
+        for t in gr.terminais:
+            for comb, dest in trans.items():
+                if comb[0] == nt and comb[1] == t:
+                    nexts.append(','.join(dest))
+
+        transicoes.append(' '.join(nexts))
+
+    return AutomatoFinito(K, alfabeto, transicoes, q0, F)
+
+    
+
+def pegar_simbolos(prod, terminais, nao_terminais):
+    terminal = None
+    for t in terminais:
+        if t in prod:
+            terminal = t
+            break
+    
+    nao_terminal = None
+    for nt in nao_terminais:
+        if nt in prod:
+            nao_terminal = nt
+            break
+
+    e = False
+    if '&' in prod:
+        e = True
+
+    return terminal, nao_terminal, e

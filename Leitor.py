@@ -1,12 +1,17 @@
-from structures.AutomatoFinito import Automato_Finito
-from structures.GramaticaRegular import Gramatica_Regular
-from structures.ExpressaoRegular import Expressao_Regular
-from src.Operacoes import *
-
 import os
-from os import path
 from sys import argv
+from os import path
 
+from loguru import logger
+
+from structures.AutomatoFinito import AutomatoFinito
+from structures.GramaticaRegular import GramaticaRegular
+from structures.ExpressaoRegular import ExpressaoRegular
+from src.operacoes import *
+
+
+# Variável de configuração para debug
+DEBUG = False
 class Leitor:
 
     def __init__(self,arquivo):
@@ -19,7 +24,7 @@ class Leitor:
             texto = arquivo.read().split('\n')
             arquivo.close()
         except OSError:
-            print('Não foi possível abrir o arquivo %s' % self.arquivo)
+            logger.error('Não foi possível abrir o arquivo %s' % self.arquivo)
             arquivo.close()
 
         tipo = self.pegar_tipo(texto)
@@ -31,7 +36,7 @@ class Leitor:
         elif (tipo == '*ER') : # Encontrou uma expressao regular
             return self.ler_expressao(texto)
         else:
-            print('O tipo descrito no arquivo não é compatível com AF, GR ou ER :/')
+            logger.error('O tipo descrito no arquivo não é compatível com AF, GR ou ER :/')
             exit()
 
     def ler_automato(self, texto):
@@ -41,13 +46,13 @@ class Leitor:
         estado_inicial = self.pegar_estado_inicial(texto)
         estados_aceitacao = self.pegar_estados_aceitacao(texto)
 
-        automato = Automato_Finito(estados, alfabeto, transicoes, estado_inicial, estados_aceitacao)
-        automato.arrumar_transicoes()
+        automato = AutomatoFinito(estados, alfabeto, transicoes, estado_inicial, estados_aceitacao)
 
         # ========================== DEBUG
-        # print(automato.alfabeto)
-        # print(automato.transicoes)
-        # print(automato.transicoes[len(automato.alfabeto)])
+        if DEBUG:
+            logger.debug(automato.alfabeto)
+            logger.debug(automato.transicoes)
+            logger.debug(automato.transicoes[len(automato.alfabeto)])
         # ========================== DEBUG
 
         return automato
@@ -58,12 +63,11 @@ class Leitor:
         producoes = self.pegar_producoes(texto)
         simbolo_inicial = self.pegar_simbolo_inicial(texto)
 
-        gramatica = Gramatica_Regular(nao_terminais, terminais, producoes, simbolo_inicial)
-
-        gramatica.arrumar_producoes()
+        gramatica = GramaticaRegular(nao_terminais, terminais, producoes, simbolo_inicial)
 
         # ========================== DEBUG
-        print(gramatica.producoes)
+        if DEBUG:
+            logger.debug(gramatica.producoes)
         # ========================== DEBUG
 
         return gramatica
@@ -72,7 +76,7 @@ class Leitor:
         alfabeto = self.pegar_alfabeto(texto)
         expressao = self.pegar_expressao(texto)
 
-        expressao_reg = Expressao_Regular(alfabeto,expressao)
+        expressao_reg = ExpressaoRegular(alfabeto,expressao)
 
         return expressao_reg
 
@@ -99,7 +103,7 @@ class Leitor:
 
     def pegar_transicoes(self, texto):
         indice = texto.index('*Transicoes')
-        return texto[indice+1:-1]
+        return texto[indice+1:]
 
     # ========================== GRAMATICAS
 
@@ -128,15 +132,17 @@ class Leitor:
 if __name__ == "__main__":
 
     if len(argv) < 2:
-        print('Não deu :<')
+        logger.error('Uso: python Leitor.py <filename>')
         exit()
 
     arquivo1 = argv[1]
 
     if not path.isfile(arquivo1):
-        print('Arquivo não encontrado')
+        logger.error('Arquivo não encontrado')
         exit()
 
     leitor1 = Leitor(arquivo1)
-    AF_R = leitor1.ler_arquivo()
-    transformar_em_GR(AF_R)
+    af = leitor1.ler_arquivo()
+    af.determinizar()
+    gr = af_para_gr(af)
+    af_nova = gr_para_af(gr)
