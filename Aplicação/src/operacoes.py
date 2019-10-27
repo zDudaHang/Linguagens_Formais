@@ -1,5 +1,7 @@
 from structures.AutomatoFinito import AutomatoFinito
 from structures.GramaticaRegular import GramaticaRegular
+from structures.ExpressaoRegular import ExpressaoRegular
+from structures.nodo import Nodo
 
 def uniao(automato_A, automato_B):
     # INICIALIZACAO DAS NOVAS TRANSICOES E ESTADOS DE ACEITACAO
@@ -199,3 +201,80 @@ def pegar_simbolos(prod, terminais, nao_terminais):
         e = True
 
     return terminal, nao_terminal, e
+
+
+def er_para_afd(er: ExpressaoRegular):
+    followpos = {i: set() for i in er.indexes}
+
+    followpos = make_followpos(er.root, followpos)
+
+    estado_inicial = str(er.root.firstpos)
+    estados_de_aceitacao = []
+    d_states_unmarked = [er.root.firstpos]
+    d_states_marked = []
+    d_tran = []
+    while d_states_unmarked:
+        S = d_states_unmarked.pop(0)
+        d_states_marked.append(S)
+        for a in er.alfabeto:
+            U = set()
+            for p in S:
+                if er.correspondentes[p] == a:
+                    fp = followpos[p]
+                    U = U.union(fp)
+
+            if U and U not in d_states_marked and U not in d_states_marked:
+                d_states_unmarked.append(U)
+
+            n = {'state': S, 'symbol': a, 'next': U}
+            if U and n not in d_tran:
+                if max(er.indexes) in n['state']:
+                    estados_de_aceitacao.append(str(U))
+                d_tran.append(n)
+
+    transicoes = {}
+    for t in d_tran:
+        if str(t['state']) not in transicoes.keys():
+            transicoes[str(t['state'])] = {}
+        transicoes[str(t['state'])][str(t['symbol'])] = str(t['next'])
+
+    alfabeto = er.alfabeto
+
+    novas_transicoes = {}
+    for k in transicoes.keys():
+        t = transicoes[k]
+        n_t = []
+        for a in alfabeto:
+            if a in t.keys():
+                n_t.append(t[a])
+            else:
+                n_t.append('V')
+        
+        novas_transicoes[k] = n_t
+
+    return AutomatoFinito(estados=novas_transicoes.keys(),
+                          alfabeto=alfabeto,
+                          estado_inicial=estado_inicial,
+                          estados_aceitacao=estados_de_aceitacao,
+                          transicoes=novas_transicoes)
+
+
+def make_followpos(node: Nodo, followpos: dict):
+    if node.eh_folha:
+        return followpos
+
+    if node.tipo == Nodo.STAR:
+        for i in node.firstpos:
+            followpos[i] = followpos[i].union(node.secondpos)
+
+    elif node.tipo == Nodo.CAT:
+        for i in node.c1.secondpos:
+            followpos[i] = followpos[i].union(node.c2.firstpos)
+
+    followpos = make_followpos(node.c1, followpos)
+    followpos = make_followpos(node.c2, followpos)
+
+    return followpos
+    
+
+
