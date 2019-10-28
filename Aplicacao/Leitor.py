@@ -2,10 +2,11 @@ import os
 from sys import argv
 from os import path
 
-from loguru import logger
+# from loguru import logger
 
 from structures.AutomatoFinito import AutomatoFinito
 from structures.GramaticaRegular import GramaticaRegular
+from structures.GLC import GLC
 from structures.ExpressaoRegular import ExpressaoRegular
 from src.operacoes import *
 
@@ -24,19 +25,19 @@ class Leitor:
             texto = arquivo.read().split('\n')
             arquivo.close()
         except OSError:
-            logger.error('Não foi possível abrir o arquivo %s' % self.arquivo)
+            # logger.error('Não foi possível abrir o arquivo %s' % self.arquivo)
             arquivo.close()
 
         tipo = self.pegar_tipo(texto)
 
         if (tipo == '*AF') : # Encontrou um automato finito
             return self.ler_automato(texto)
-        elif (tipo == '*GR') : # Encontrou uma gramatica regular
-            return self.ler_gramatica(texto)
+        elif (tipo == '*GR' or tipo == '*GLC') : # Encontrou uma gramatica regular ou uma glc
+            return self.ler_gramatica(texto, tipo)
         elif (tipo == '*ER') : # Encontrou uma expressao regular
             return self.ler_expressao(texto)
         else:
-            logger.error('O tipo descrito no arquivo não é compatível com AF, GR ou ER :/')
+            # logger.error('O tipo descrito no arquivo não é compatível com AF, GR ou ER :/')
             exit()
 
     def ler_automato(self, texto):
@@ -49,25 +50,28 @@ class Leitor:
         automato = AutomatoFinito(estados, alfabeto, transicoes, estado_inicial, estados_aceitacao)
 
         # ========================== DEBUG
-        if DEBUG:
-            logger.debug(automato.alfabeto)
-            logger.debug(automato.transicoes)
-            logger.debug(automato.transicoes[len(automato.alfabeto)])
+        # if DEBUG:
+        #     logger.debug(automato.alfabeto)
+        #     logger.debug(automato.transicoes)
+        #     logger.debug(automato.transicoes[len(automato.alfabeto)])
         # ========================== DEBUG
 
         return automato
 
-    def ler_gramatica(self, texto):
+    def ler_gramatica(self, texto, tipo):
         nao_terminais = self.pegar_nao_terminais(texto)
         terminais = self.pegar_terminais(texto)
         producoes = self.pegar_producoes(texto)
         simbolo_inicial = self.pegar_simbolo_inicial(texto)
 
-        gramatica = GramaticaRegular(nao_terminais, terminais, producoes, simbolo_inicial)
+        if (tipo == '*GR'):
+            gramatica = GramaticaRegular(nao_terminais, terminais, producoes, simbolo_inicial)
+        else:
+            gramatica = GLC(nao_terminais, terminais, producoes, simbolo_inicial)
 
         # ========================== DEBUG
-        if DEBUG:
-            logger.debug(gramatica.producoes)
+        # if DEBUG:
+        #     logger.debug(gramatica.producoes)
         # ========================== DEBUG
 
         return gramatica
@@ -132,13 +136,13 @@ class Leitor:
 if __name__ == "__main__":
 
     if len(argv) < 2:
-        logger.error('Uso: python Leitor.py <filename>')
+        # logger.error('Uso: python Leitor.py <filename>')
         exit()
 
     arquivo1 = argv[1]
 
     if not path.isfile(arquivo1):
-        logger.error('Arquivo não encontrado')
+        # logger.error('Arquivo não encontrado')
         exit()
 
     leitor1 = Leitor(arquivo1)

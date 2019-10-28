@@ -8,7 +8,7 @@
 
   [X] d) Reconhecimento de sentenças em AF (0,5pt)
 
-  [ ] e) Minimização de AFD (1,0pt) 
+  [ ] e) Minimização de AFD (1,0pt)
 
   [ ] f) União e interseção de AFD (1,0pt)
 
@@ -23,3 +23,5 @@
   [ ] k) Fatoração (1,0pt)
 
   [ ] l) Reconhecimento de sentenças em AP (via implementação de alguma tabela de aná-lise) (1,75pt)
+
+  [ ] m) Separar as operações em dois grupos: Automatos e Gramáticas (0,0 pt)

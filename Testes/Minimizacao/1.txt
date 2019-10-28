@@ -1,0 +1,21 @@
+*AF
+*Estados
+S A B C D E F G H I
+*EstadoInicial
+S
+*EstadosDeAceitacao
+D F G
+*Alfabeto
+a b
+
+*Transicoes
+A B
+C D
+B E
+B A
+E F
+C D
+G H
+F H
+H H
+B A
