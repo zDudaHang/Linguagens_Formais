@@ -1,4 +1,3 @@
-from structures.AutomatoFinito import AutomatoFinito
 from Leitor import Leitor
 from src.operacoes import minimizar,remover_inalcancaveis,remover_mortos,remover_equivalentes
 

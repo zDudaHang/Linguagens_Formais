@@ -1,4 +1,3 @@
-from structures.GLC import GLC
 from Leitor import Leitor
 from src.operacoes import remover_inalcancaveis_glc
 
