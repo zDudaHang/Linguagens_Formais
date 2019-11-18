@@ -19,7 +19,7 @@ class GLC:
 
     def display(self):
         print('Terminais (T): ', ', '.join(self.terminais))
-        print('Não-terminais (N): ', ', '.join(self.terminais))
+        print('Não-terminais (N): ', ', '.join(self.nao_terminais))
         print('Símbolo inicial (S): ', self.simbolo_inicial)
         print('Produções:')
         for simb, prod in self.producoes.items():
