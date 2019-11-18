@@ -1,0 +1,21 @@
+*GLC
+*NaoTerminais
+P K T V L C
+*Terminais
+b e c t & v com
+*SimboloInicial
+P
+*Producoes
+P->KL
+P->bKLe
+K->cK
+K->TV
+T->tT
+T->&
+V->vV
+V->&
+L->LC
+L->C
+C->P
+C->com
+C->&

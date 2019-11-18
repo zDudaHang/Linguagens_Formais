@@ -1,0 +1,20 @@
+*GLC
+*NaoTerminais
+S A B C D
+*Terminais
+a b c d &
+*SimboloInicial
+S
+*Producoes
+S->AB
+S->aS
+A->bA
+A->BC
+B->dB
+B->C
+B->&
+C->cCc
+C->BD
+D->CD
+D->d
+D->&
