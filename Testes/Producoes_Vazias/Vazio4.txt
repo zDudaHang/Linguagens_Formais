@@ -1,0 +1,16 @@
+*GLC
+*NaoTerminais
+E E' T T' F
+*Terminais
+& v ^ ! id
+*SimboloInicial
+E
+*Producoes
+E->TE'
+E'->&
+E'->vTE'
+T->FT'
+T'->&
+T'->^FT'
+F->!F
+F->id

@@ -8,3 +8,7 @@ remover_inalcancaveis_glc(glc1)
 leitor.arquivo = '../Testes/Inuteis/Inuteis2.txt'
 glc2 = leitor.ler_arquivo()
 remover_inalcancaveis_glc(glc2)
+
+leitor.arquivo = '../Testes/Inuteis/Inuteis3.txt'
+glc3 = leitor.ler_arquivo()
+remover_inalcancaveis_glc(glc3)

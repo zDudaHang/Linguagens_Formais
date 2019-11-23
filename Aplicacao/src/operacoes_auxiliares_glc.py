@@ -3,24 +3,20 @@
 # ===================================== TODO
 
 def pegar_alfas_e_betas(producao, anulaveis):
-    simbolos_anulaveis = []
-    # PEGANDO OS SIMBOLOS ANULAVEIS DE UMA PRODUCAO PRIMEIRO
-    # B PERTENCE A E (CONJ. NAO TERMINAIS ANULAVEIS)
-    for simbolo in producao:
-        if simbolo in anulaveis:
-            simbolos_anulaveis.append(simbolo)
     # PEGANDO  OS ALFAS E BETAS
     lista_alfa_beta = []
-    for simbolo_anulavel in simbolos_anulaveis:
-        producao_dividida = producao.split(simbolo_anulavel)
-        alfa = producao_dividida[0]
-        beta = producao_dividida[1]
-        # Alfa.Beta != Vazio
-        if len(alfa) != 0 or len(beta) != 0:
-            if alfa+beta not in lista_alfa_beta:
-                lista_alfa_beta.append(alfa+beta)
+    for simbolo_anulavel in anulaveis:
+        if simbolo_anulavel in producao:
+            producao_dividida = producao.split(simbolo_anulavel)
+            alfa = producao_dividida[0]
+            beta = producao_dividida[1]
+            # Alfa.Beta != Vazio
+            if len(alfa) != 0 or len(beta) != 0:
+                if alfa+beta not in lista_alfa_beta:
+                    lista_alfa_beta.append(alfa+beta)
     return lista_alfa_beta
 
+# PEGA APENAS AS PRODUCOES SEM &
 def buscar_producoes_sem_epsilon(producoes, nao_terminais):
     producoes_novas = {}
     for nao_terminal in nao_terminais:
@@ -30,6 +26,7 @@ def buscar_producoes_sem_epsilon(producoes, nao_terminais):
                 producoes_novas[nao_terminal].append(producao)
     return producoes_novas
 
+# ENCONTRA TODOS OS NAO-TERMINAIS ANULAVEIS DA GRAMATICA
 def encontrar_anulaveis(producoes, nao_terminais):
     anulaveis = ['&']
     while(True):

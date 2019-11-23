@@ -65,12 +65,23 @@ def remover_inalcancaveis_glc(glc):
     glc.display()
 
 def remover_producoes_por_epsilon(glc):
-    # glc.display()
     anulaveis = encontrar_anulaveis(glc.producoes, glc.nao_terminais)
+    # ===================================================================== DEBUG
+    print("Anuláveis = %s" % anulaveis)
+    # ===================================================================== DEBUG
     producoes_novas = buscar_producoes_sem_epsilon(glc.producoes, glc.nao_terminais)
+    # ===================================================================== DEBUG
+    print("P' = %s" % producoes_novas)
+    # ===================================================================== DEBUG
     for nao_terminal in glc.nao_terminais:
         for producao in producoes_novas[nao_terminal]:
+            # ===================================================================== DEBUG
+            print("Produção = %s" % producao)
+            # ===================================================================== DEBUG
             lista_alfa_beta = pegar_alfas_e_betas(producao, anulaveis)
+            # ===================================================================== DEBUG
+            print("Lista_Alfa_Beta = %s" % lista_alfa_beta)
+            # ===================================================================== DEBUG
             for alfa_beta in lista_alfa_beta:
                 if alfa_beta not in producoes_novas[nao_terminal]:
                     producoes_novas[nao_terminal].append(alfa_beta)
