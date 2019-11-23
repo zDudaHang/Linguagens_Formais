@@ -1,0 +1,14 @@
+*GLC
+*NaoTerminais
+V C E
+*Terminais
+id [ ] ( ) exp = ,
+*SimboloInicial
+V
+*Producoes
+V->id[E]
+V->id
+C->V=exp
+C->id(E)
+E->exp,E
+E->exp
