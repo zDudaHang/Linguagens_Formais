@@ -41,7 +41,6 @@ class AutomatoFinito:
 
         self.definir_novas_transicoes(e_fecho, transicoes_referencia)
 
-
     def calcular_e_fecho(self):
         e_fecho = self.inicializar_e_fecho()
         for estado in self.estados:
@@ -69,7 +68,7 @@ class AutomatoFinito:
     def verificar_estado_de_aceitacao(self, transicao):
         estados = transicao.split(',')
         for estado in estados:
-            if estado in self.estados_aceitacao:
+            if estado in self.estados_aceitacao and transicao not in self.estados_aceitacao:
                 self.estados_aceitacao.append(transicao)
 
     def definir_novas_transicoes(self, e_fecho, transicoes_referencia):
@@ -121,6 +120,13 @@ class AutomatoFinito:
                         estado_a_transitar = 'V'
 
                     self.transicoes[estado][j] = estado_a_transitar
+        self.limpar_estados_aceitacao()
+
+    def limpar_estados_aceitacao(self):
+        for estado_aceitacao in self.estados_aceitacao:
+            if estado_aceitacao not in self.estados:
+                self.estados_aceitacao.remove(estado_aceitacao)
+
 
     def negar(self):
         novos_estados_de_aceitacao = []
@@ -130,10 +136,10 @@ class AutomatoFinito:
         self.estados_aceitacao = novos_estados_de_aceitacao
 
     def display(self):
-        print('Estados (K): ', ','.join(self.estados))
-        print('Estados de aceitação (F): ', ','.join(self.estados_aceitacao))
+        print('Estados (K): ', ' | '.join(self.estados))
+        print('Estados de aceitação (F): ', ' | '.join(self.estados_aceitacao))
         print('Estado inicial (q0): %s' % self.estado_inicial)
-        print('Alfabeto: ', ','.join(self.alfabeto))
+        print('Alfabeto: ', ' | '.join(self.alfabeto))
         print('Transições:')
         for estado, transicao in self.transicoes.items():
             print(f'{estado} -> {" | ".join(transicao)}')

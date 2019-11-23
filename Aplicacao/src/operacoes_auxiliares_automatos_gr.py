@@ -84,6 +84,7 @@ def pegar_novas_transicoes(transicoes, lista_estados):
     return novas_transicoes
 
 def modificar_transicoes(P, k, automato):
+    mapeamento = {}
     novos_estados = []
     novos_estados_de_aceitacao = []
     novas_transicoes = {}
@@ -102,6 +103,7 @@ def modificar_transicoes(P, k, automato):
         estado_equivalente = 'q' + str(i)
         novos_estados.append(estado_equivalente)
         estado = P[k][i][0]
+        mapeamento[estado] = estado_equivalente
         if estado in automato.estados_aceitacao:
             novos_estados_de_aceitacao.append(estado_equivalente)
         for j in range(0,len(automato.alfabeto)):
@@ -116,6 +118,7 @@ def modificar_transicoes(P, k, automato):
     automato.estados = novos_estados
     automato.transicoes = novas_transicoes
     automato.estados_aceitacao = novos_estados_de_aceitacao
+    return mapeamento
 
 # DIFERENCA ENTRE DUAS LISTAS
 def diferenca(lista_1, lista_2):
@@ -185,3 +188,11 @@ def encontrar_indice(estado, Pk):
             if estado_particao == estado:
                 return i
     return indice
+
+# INTERSECAO ENTRE DUAS LISTAS
+def intersecao_listas(lista1, lista2):
+    lista_intersecao = []
+    for elemento in lista1:
+        if elemento in lista2:
+            lista_intersecao.append(elemento)
+    return lista_intersecao

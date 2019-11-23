@@ -1,0 +1,5 @@
+*ER
+*Alfabeto
+a b
+*Expressao
+a.(a+b)*.a

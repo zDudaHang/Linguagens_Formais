@@ -1,0 +1,18 @@
+*AF
+*Estados
+q0 UPb ZIb DPb UIb ZPb DIb
+*EstadoInicial
+q0
+*EstadosDeAceitacao
+q0 ZPb
+*Alfabeto
+a b c
+
+*Transicoes
+UPb ZIb UPb
+DPb UIb DPb
+UIb ZPb UIb
+ZPb DIb ZPb
+DIb UPb DIb
+UPb ZIb UPb
+ZIb DPb ZIb

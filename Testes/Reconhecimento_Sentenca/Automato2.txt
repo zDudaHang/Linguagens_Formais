@@ -1,14 +1,16 @@
 *AF
 *Estados
-q0 q1 q2
+q0 I IFb P PFb
 *EstadoInicial
 q0
 *EstadosDeAceitacao
-q2
+I IFb
 *Alfabeto
 a b
 
 *Transicoes
-q2 q1 V
-q0 q1 q0
-q2 q2 q0
+I IFb
+P PFb
+P V
+I IFb
+I V

@@ -40,32 +40,6 @@ def uniao(automato_A: AutomatoFinito, automato_B: AutomatoFinito):
 
     return novo_automato
 
-def afnd_para_afd(automato: AutomatoFinito):
-    efecho = pegar_e_fecho(automato)
-    # =============================================== debug
-    print("E-fecho = %s" % efecho)
-    # =============================================== debug
-    for estado in automato.estados:
-        for transicao in automato.transicoes[estado]:
-            # =============================================== debug
-            print("Transição = %s" % transicao)
-            # =============================================== debug
-
-def pegar_e_fecho(automato: AutomatoFinito):
-    efecho = {}
-    tamanho_alfabeto = len(automato.alfabeto)
-    for estado in automato.estados:
-        efecho[estado] = [estado]
-        try:
-            transicao = automato.transicoes[estado][tamanho_alfabeto]
-            for estado_transicao in transicao.split(','):
-                if estado_transicao not in efecho[estado]:
-                    efecho[estado].append(estado_transicao)
-        except IndexError:
-            continue
-    return efecho
-
-
 # PROCURANDO TRANSICOES POR E-FECHO PARA ADICIONAR AS NOVAS TRANSICOES
 def verificar_transicoes_por_e(automato: AutomatoFinito, novas_transicoes, novos_estados, indice_base):
     i = len(automato.alfabeto)
@@ -241,8 +215,8 @@ def er_para_afd(er: ExpressaoRegular):
 
             n = {'state': S, 'symbol': a, 'next': U}
             if U and n not in d_tran:
-                if max(er.indexes) in n['state']:
-                    estados_de_aceitacao.append(str(U))
+                if max(er.indexes) in n['state'] and str(n['state']) not in estados_de_aceitacao:
+                    estados_de_aceitacao.append(str(n['state']))
                 d_tran.append(n)
 
     transicoes = {}
@@ -294,7 +268,6 @@ def minimizar(automato: AutomatoFinito):
     remover_inalcancaveis(automato)
     remover_mortos(automato)
     remover_equivalentes(automato)
-    automato.mostrar_transicoes()
 
 # REMOCAO DOS ESTADOS INALCANCAVEIS
 def remover_inalcancaveis(automato: AutomatoFinito):
@@ -313,8 +286,8 @@ def remover_inalcancaveis(automato: AutomatoFinito):
             alcancaveis.extend(novos_alcancaveis)
         if not mudanca:
             break
-    automato.estados = intersecao(automato.estados, alcancaveis)
-    automato.estados_aceitacao = intersecao(automato.estados_aceitacao, alcancaveis)
+    automato.estados = intersecao_listas(automato.estados, alcancaveis)
+    automato.estados_aceitacao = intersecao_listas(automato.estados_aceitacao, alcancaveis)
     automato.transicoes = pegar_novas_transicoes(automato.transicoes, alcancaveis)
 
 # PEGA APENAS AS TRANSICOES DO AUTOMATO QUE ESTAO NA LISTA_ESTADOS
@@ -359,7 +332,7 @@ def remover_mortos(automato: AutomatoFinito):
             vivos.extend(novos_vivos)
         if not mudanca:
             break
-    automato.estados = intersecao(automato.estados, vivos)
+    automato.estados = intersecao_listas(automato.estados, vivos)
     automato.transicoes = pegar_novas_transicoes(automato.transicoes, vivos)
 
 # REMOVER ESTADOS EQUIVALENTES
@@ -378,9 +351,10 @@ def remover_equivalentes(automato: AutomatoFinito):
             if distinguiveis_encontrados:
                 break
         if (not mudanca):
-            modificar_transicoes(P, k, automato)
+            mapeamento = modificar_transicoes(P, k, automato)
             break
         k += 1
+    print("Mapeamento[EstadosOriginais -> EstadosApósMinimização] = %s" % mapeamento)
 
 # def modificar_transicoes(P, k, automato):
 #     novos_estados = []
