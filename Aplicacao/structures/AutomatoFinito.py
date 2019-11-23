@@ -129,18 +129,14 @@ class AutomatoFinito:
                 novos_estados_de_aceitacao.append(estado)
         self.estados_aceitacao = novos_estados_de_aceitacao
 
-    def mostrar_transicoes(self):
-        print("======= Estados do AF =======")
-        for estado in self.estados:
-            texto = ''
-            if estado == self.estado_inicial:
-                texto += '-> '
-            if estado in self.estados_aceitacao:
-                texto += ' * '
-
-            texto += estado + ': '
-            transicoes = ' | '.join(map(str, self.transicoes[estado]))
-            print(texto + transicoes)
+    def display(self):
+        print('Estados (K): ', ','.join(self.estados))
+        print('Estados de aceitação (F): ', ','.join(self.estados_aceitacao))
+        print('Estado inicial (q0): %s' % self.estado_inicial)
+        print('Alfabeto: ', ','.join(self.alfabeto))
+        print('Transições:')
+        for estado, transicao in self.transicoes.items():
+            print(f'{estado} -> {" | ".join(transicao)}')
 
     def exportar(self, filename):
         t = f'*AF\n*Estados\n' +\
@@ -171,4 +167,3 @@ class AutomatoFinito:
             current_state = self.transicoes[current_state][i]
 
         return current_state in self.estados_aceitacao
-
