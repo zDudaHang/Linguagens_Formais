@@ -64,22 +64,10 @@ def remover_inalcancaveis_glc(glc):
 
 def remover_producoes_por_epsilon(glc):
     anulaveis = encontrar_anulaveis(glc.producoes, glc.nao_terminais)
-    # ===================================================================== DEBUG
-    # print("Anuláveis = %s" % anulaveis)
-    # ===================================================================== DEBUG
     producoes_novas = buscar_producoes_sem_epsilon(glc.producoes, glc.nao_terminais)
-    # ===================================================================== DEBUG
-    # print("P' = %s" % producoes_novas)
-    # ===================================================================== DEBUG
     for nao_terminal in glc.nao_terminais:
         for producao in producoes_novas[nao_terminal]:
-            # ===================================================================== DEBUG
-            # print("Produção = %s" % producao)
-            # ===================================================================== DEBUG
             lista_alfa_beta = pegar_alfas_e_betas(producao, anulaveis)
-            # ===================================================================== DEBUG
-            # print("Lista_Alfa_Beta = %s" % lista_alfa_beta)
-            # ===================================================================== DEBUG
             for alfa_beta in lista_alfa_beta:
                 if alfa_beta not in producoes_novas[nao_terminal]:
                     producoes_novas[nao_terminal].append(alfa_beta)
@@ -127,10 +115,6 @@ def transformar_em_fnc(glc):
         mudanca = False
         for nao_terminal in glc.nao_terminais:
             for producao in glc.producoes[nao_terminal]:
-                # ========================================================= DEBUG
-                # print(glc.producoes[nao_terminal])
-                # print("========================= %s -> %s" % (nao_terminal, producao))
-                # ========================================================= DEBUG
                 pertence_a_fnc = validar_pertinencia_fnc(producao, glc)
                 if not pertence_a_fnc:
                     if verificar_tamanho(producao, glc) == 2:
@@ -139,9 +123,6 @@ def transformar_em_fnc(glc):
                     else:
                         i = tratar_tamanho_maior(nao_terminal, producao, glc, i)
                         mudanca = True
-                    # ========================================================= DEBUG
-                    # print(glc.producoes[nao_terminal])
-                    # ========================================================= DEBUG
         if not mudanca:
             break
 
@@ -152,20 +133,21 @@ def fatorar(glc):
     for nao_terminal in glc.nao_terminais:
         j = resolver_nao_determinismo_direto(glc, nao_terminal, j)
     # SE ENCONTRAR UMA NAO DETERMINISMO INDIRETO, RESOLVA-O
+    print(glc.producoes)
     contador = 0
     for nao_terminal in glc.nao_terminais:
         if contador > 10:
             print("====> ERRO: Não foi possível fatorar a gramática.")
-            return None
+            return False
         existe_nao_determinismo_indireto = encontrar_nao_determinismo_indireto(glc, nao_terminal)
         if existe_nao_determinismo_indireto:
+            print("existe não determinismo indireto")
             contador += 1
             j = resolver_nao_determinismo_direto(glc, nao_terminal, j)
-    print("====> SAÍDA:")
 
 
 def remover_recursao_esquerda_dir_indir(glc):
-    
+
     remover_recursao_esquerda_direta(glc)
     remover_producoes_por_epsilon(glc)
     remover_recursao_esquerda_indireta(glc)
@@ -199,7 +181,7 @@ def remover_recursao_esquerda_indireta(glc):
 
     return glc
 
-    
+
 def remover_recursao_esquerda_direta(glc):
     new_prods = dict()
     for head, bodies in glc.producoes.items():
@@ -228,5 +210,3 @@ def remover_recursao_esquerda_direta(glc):
     glc.producoes = new_prods
 
     return glc
-            
-            

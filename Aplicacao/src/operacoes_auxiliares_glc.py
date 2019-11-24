@@ -136,17 +136,8 @@ def verificar_tamanho(producao, glc):
     return contador
 
 def tratar_tamanho_maior(nao_terminal, producao, glc, i):
-    # ========================================================= DEBUG
-    # print("----------------------- TRATANDO TAMANHO MAIOR")
-    # print("Produção = %s" % producao)
-    # ========================================================= DEBUG
     (ultimo, indice) = encontrar_ultimo_simbolo(producao,glc)
     resto = producao[0:indice]
-
-    # ========================================================= DEBUG
-    # print("Último = %s P[%d::]" % (producao[indice::], indice))
-    # print("Resto = %s" % resto)
-    # ========================================================= DEBUG
 
     nao_terminal_subtituinte = encontrar_producao_equivalente(glc,resto)
 
@@ -174,18 +165,9 @@ def tratar_tamanho_maior(nao_terminal, producao, glc, i):
     # ADICIONANDO O RESTO COMO PRODUCAO DO NOVO NAO TERMINAL
     glc.producoes[nao_terminal_subtituinte] = [resto]
 
-    # ========================================================= DEBUG
-    # print("Nova produção str = %s" % nova_producao_str)
-    # print("%s -> %s" % (nao_terminal_subtituinte, resto))
-    # ========================================================= DEBUG
-
     return i
 
 def tratar_tamanho_dois(nao_terminal, producao, glc, i):
-    # ========================================================= DEBUG
-    # print("----------------------- TRATANDO TAMANHO DOIS")
-    # print("Produção = %s" % producao)
-    # ========================================================= DEBUG
     nao_terminal_subtituinte = None
     indice_nao_terminal = -1
     indice_terminal = -1
@@ -230,40 +212,21 @@ def tratar_tamanho_dois(nao_terminal, producao, glc, i):
     # ADICIONANDO O RESTO AO NOVO NAO TERMINAL
     glc.producoes[nao_terminal_subtituinte] = [parte_do_terminal]
 
-    # ========================================================= DEBUG
-    # print("Nova produção str = %s" % nova_producao_str)
-    # print("%s -> %s" % (nao_terminal_subtituinte, parte_do_terminal))
-    # ========================================================= DEBUG
-
     return(i)
 
 def encontrar_producao_equivalente(glc, terminal):
-    # ========================================================= DEBUG
-    # print("---------------------------\n PROCURANDO: Terminal %s" % terminal)
-    # ========================================================= DEBUG
     for nao_terminal in glc.producoes.keys():
         for producao in glc.producoes[nao_terminal]:
             if (producao == terminal) and ('X_' in nao_terminal):
-                # ========================================================= DEBUG
-                # print("Encontrado: %s -> %s" % (nao_terminal, producao))
-                # ========================================================= DEBUG
                 return nao_terminal
     return None
 
 def validar_pertinencia_fnc(producao, glc):
-    # ========================================================= DEBUG
-    # print("------------- VALIDANDO PERTINENCIA FNC -------------")
-    # print("Produção = %s" % producao)
-    # ========================================================= DEBUG
     if len(producao) == 1:
         return (producao in glc.terminais)
     elif verificar_tamanho(producao,glc) == 2:
         (primeiro, indice) = pegar_primeiro_simbolo(producao, glc)
         segundo = producao[indice::]
-        # ========================================================= DEBUG
-        # print("Primeiro símbolo = %s P[0:%d]" % (primeiro, indice))
-        # print("Segundo símbolo = %s P[%d::]" % (producao[indice::], indice))
-        # ========================================================= DEBUG
         return (primeiro in glc.nao_terminais) and (segundo in glc.nao_terminais)
     else:
         return False
@@ -280,29 +243,13 @@ def pegar_primeiro_simbolo(producao, glc):
 
 def verificar_existencia_nao_determinismo_direto(glc, producoes):
     (terminais_producoes,terminais_a_esquerda) = pegar_terminais_a_esquerda(glc, producoes)
-    # ========================================================= DEBUG
-    # print("Terminais a esquerda = %s" % terminais_a_esquerda)
-    # print("Terminais e suas produções = %s" % terminais_producoes)
-    # ========================================================= DEBUG
     lista_filtrada = filtrar_lista_de_terminais(terminais_a_esquerda, terminais_producoes)
     return (lista_filtrada != [], lista_filtrada)
 
 def resolver_nao_determinismo_direto(glc, nao_terminal, j):
-    # ========================================================= DEBUG
-    # print("------------------- DIRETO: Não terminal = %s" % nao_terminal)
-    # print("P[%s] = %s" % (nao_terminal, glc.producoes[nao_terminal]))
-    # ========================================================= DEBUG
     (existe_nao_determinismo_direto, lista_filtrada) = verificar_existencia_nao_determinismo_direto(glc, glc.producoes[nao_terminal])
-    # ========================================================= DEBUG
-    # print("Lista Filtrada = %s" % lista_filtrada)
-    # ========================================================= DEBUG
     if existe_nao_determinismo_direto:
         mapeamento = mapear_terminais(lista_filtrada)
-
-        # ========================================================= DEBUG
-        # print("Mapeamento = %s" % mapeamento)
-        # ========================================================= DEBUG
-
         for terminal in mapeamento.keys():
 
             # CRIANDO UM NOVO NAO TERMINAL PARA SUBSTITUIR O RESTO
@@ -315,13 +262,7 @@ def resolver_nao_determinismo_direto(glc, nao_terminal, j):
 
 
             # REMOVENDO AS PRODUCOES VELHAS
-            # ========================================================= DEBUG
-            # print("--> Terminal: = %s" % terminal)
-            # ========================================================= DEBUG
             for producao_alvo in mapeamento[terminal]:
-                # ========================================================= DEBUG
-                # print("Produção alvo = %s" % producao_alvo)
-                # ========================================================= DEBUG
                 # PROCURANDO O INDICE DO TERMINAL NA PRODUCAO
                 (simbolo, indice) = pegar_primeiro_simbolo(producao_alvo, glc)
 
@@ -330,45 +271,23 @@ def resolver_nao_determinismo_direto(glc, nao_terminal, j):
                 if resto == '':
                     resto = '&'
 
-                # ========================================================= DEBUG
-                # print("Índice de %s = %d" % (terminal, indice))
-                # print("Resto = %s" % resto)
-                # ========================================================= DEBUG
-
                 # REMOVENDO A PRODUCs = %s" % novas_producoes)
-                # print("Relações = %s" % relAO A SER SUBSTITUIDA
-                # ========================================================= DEBUG
-                # print("Removendo: %s" % producao_alvo)
-                # ========================================================= DEBUG
                 glc.producoes[nao_terminal].remove(producao_alvo)
 
                 # SUBSTITUINDO PELA PRODUCAO NOVA
                 if (terminal + novo_nao_terminal) not in glc.producoes[nao_terminal]:
                     glc.producoes[nao_terminal].append(terminal + novo_nao_terminal)
 
-                # ========================================================= DEBUG
-                # print("P[%s] = %s" %(nao_terminal, glc.producoes[nao_terminal]) )
-                # ========================================================= DEBUG
-
                 # ADICIONANDO O RESTO DE CADA PRODUCAO VELHA COMO PRODUCAO DO NOVO NAO TERMINAL
                 if resto not in glc.producoes[novo_nao_terminal]:
                     glc.producoes[novo_nao_terminal].append(resto)
-                    # ========================================================= DEBUG
-                    # print("P[%s] = %s" %(novo_nao_terminal, glc.producoes[novo_nao_terminal]) )
-                    # ========================================================= DEBUG
     return j
 
 def encontrar_nao_determinismo_indireto(glc, nao_terminal):
     producoes_temporarias = []
     relacoes = []
-    # ========================================================= DEBUG
-    # print("\nProduções de %s = %s" % (nao_terminal, glc.producoes[nao_terminal]))
-    # ========================================================= DEBUG
     for producao in glc.producoes[nao_terminal]:
         (primeiro_simbolo,indice) = pegar_primeiro_simbolo(producao, glc)
-        # ========================================================= DEBUG
-        # print("Produção : %s" % producao)
-        # ========================================================= DEBUG
         if primeiro_simbolo == None:
             continue
         if primeiro_simbolo in glc.terminais and producao not in producoes_temporarias:
@@ -376,13 +295,7 @@ def encontrar_nao_determinismo_indireto(glc, nao_terminal):
             if primeiro_simbolo not in relacoes:
                 relacoes.append((producao, producao))
         if primeiro_simbolo in glc.nao_terminais:
-            # ========================================================= DEBUG
-            # print("Primeiro símbolo: %s" % primeiro_simbolo)
-            # ========================================================= DEBUG
             producoes_primeiro_simbolo = glc.producoes[primeiro_simbolo]
-            # ========================================================= DEBUG
-            # print("Produções do primeri símbolo : P[%s] = %s"  % (primeiro_simbolo, producoes_primeiro_simbolo))
-            # ========================================================= DEBUG
             (producoes_subidas, relacao_entre_producoes) = subir_producoes(producao, producoes_primeiro_simbolo, indice)
 
             # ADICIONANDO CADA PRODUCAO SUBIDA AS PRODUCOES TEMPORARIAS
@@ -394,28 +307,16 @@ def encontrar_nao_determinismo_indireto(glc, nao_terminal):
             for par in relacao_entre_producoes:
                 if par not in relacoes:
                     relacoes.append(par)
-    # ========================================================= DEBUG
-    # print("Produções temporárias: %s" % producoes_temporarias)
-    # ========================================================= DEBUG
     (existe_nao_determinismo_direto, lista_filtrada) = verificar_existencia_nao_determinismo_direto(glc, producoes_temporarias)
-    # ========================================================= DEBUG
-    # print("Lista filtrada = %s" % lista_filtrada)
-    # print("Existe não determinismo direto em %s ? %s" % (producoes_temporarias, existe_nao_determinismo_direto))
-    # ========================================================= DEBUG
+    print(lista_filtrada)
     if existe_nao_determinismo_direto:
         # SUBSTITUINDO AS PRODUCOES ANTIGAS PELAS TEMPORARIAS
-        # ========================================================= DEBUG
-        # print("Relações = %s" % relacoes)
-        # ========================================================= DEBUG
         for par in relacoes:
             producao_substituida = par[1]
             if producao_substituida in glc.producoes[nao_terminal]:
                 glc.producoes[nao_terminal].remove(producao_substituida)
         for producao in producoes_temporarias:
             glc.producoes[nao_terminal].append(producao)
-        # ========================================================= DEBUG
-        # print("P[%s] = %s" % (nao_terminal, glc.producoes[nao_terminal]))
-        # ========================================================= DEBUG
         return True
     else:
         return False
@@ -426,18 +327,11 @@ def subir_producoes(producao_candidata, producoes, indice_primeiro_simbolo):
     relacao_entre_producoes = []
     for producao in producoes:
         nova_producao = producao + producao_candidata[indice_primeiro_simbolo::]
-        # ========================================================= DEBUG
-        # print("Nova produção = %s" % nova_producao)
-        # ========================================================= DEBUG
         par = (nova_producao, producao_candidata)
         if nova_producao not in novas_producoes:
             novas_producoes.append(nova_producao)
         if par not in relacao_entre_producoes:
             relacao_entre_producoes.append(par)
-    # ========================================================= DEBUG
-    # print("Novas produções = %s" % novas_producoes)
-    # print("Relações = %s" % relacao_entre_producoes)
-    # ========================================================= DEBUG
     return (novas_producoes, relacao_entre_producoes)
 
 def pegar_terminais_a_esquerda(glc, producoes):
