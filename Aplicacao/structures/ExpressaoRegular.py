@@ -29,6 +29,9 @@ class ExpressaoRegular:
         with open(filename, 'w') as f:
             f.write(t)
 
+    def display(self):
+        print(self.expressao)
+
 
     def parse(self, expressao):
         # Caso base para recursão
