@@ -106,15 +106,22 @@ def follows(glc, first=None):
         for head, bodies in glc.producoes.items():
             for body in bodies:
                 symbols = split_into_symbols(body, glc.terminais, glc.nao_terminais)
+                print(head, '::=', symbols)
                 for i in range(len(symbols)):
                     if symbols[i] in glc.nao_terminais:
+                        old = follow[symbols[i]]
                         if i == len(symbols) - 1 or '&' in first[symbols[i + 1]]:
                             # Putting follow of the head on follow of symbol when it is the last or
                             # the next symbol's first contain empty set
+                            print(f'Adding follow of {head} to follow of {symbols[i]}')
                             follow[symbols[i]] = follow[symbols[i]].union(follow[head])
 
-                        elif symbols[i + 1] in glc.nao_terminais:
+                        else:
                             # Add first of the following symbol to current symbol's follow
-                            follow[symbols[i]] = follow[symbols[i]].union(first[symbols[i+1]])
+                            print(f'Adding first of {symbols[i+1]} to follow of {symbols[i]}')
+                            follow[symbols[i]] = follow[symbols[i]].union(first[symbols[i + 1]])
+
+                        if old != follow[symbols[i]]:
+                            new_added = True
 
     return follow
