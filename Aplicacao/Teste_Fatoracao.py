@@ -1,7 +1,12 @@
+'''
+Este arquivo testa a fatoração de gramáticas livre de contexto a partir de
+três exemplos
+'''
+
 from Leitor import Leitor
 from src.operacoes_glc import fatorar
 
-leitor = Leitor('../Testes/Fatoracao/fatoracao1.txt')
+leitor = Leitor('../Testes/Fatoracao/teste1fatoracao.txt')
 glc1 = leitor.ler_arquivo()
 
 print(f"\n\n====> Fatoração para a GLC abaixo, lida do arquivo `{leitor.arquivo}`:")
@@ -10,7 +15,7 @@ fatorar(glc1)
 print('\n====> Saída:')
 glc1.display()
 
-leitor.arquivo = '../Testes/Fatoracao/fatoracao2.txt'
+leitor.arquivo = '../Testes/Fatoracao/teste2fatoracao.txt'
 glc2 = leitor.ler_arquivo()
 print(f"\n\n====> Fatoração para a GLC abaixo, lida do arquivo `{leitor.arquivo}`:")
 glc2.display()
@@ -18,7 +23,7 @@ fatorar(glc2)
 print('\n====> Saída:')
 glc2.display()
 
-leitor.arquivo = '../Testes/Fatoracao/fatoracao3.txt'
+leitor.arquivo = '../Testes/Fatoracao/teste3fatoracao.txt'
 glc3 = leitor.ler_arquivo()
 print(f"\n\n====> Fatoração para a GLC abaixo, lida do arquivo `{leitor.arquivo}`:")
 glc3.display()
@@ -26,7 +31,7 @@ fatorar(glc3)
 print('\n====> Saída:')
 glc3.display()
 
-leitor.arquivo = '../Testes/Fatoracao/fatoracao4.txt'
+leitor.arquivo = '../Testes/Fatoracao/teste4fatoracao.txt'
 glc4 = leitor.ler_arquivo()
 print(f"\n\n====> Fatoração para a GLC abaixo, lida do arquivo `{leitor.arquivo}`:")
 glc4.display()
@@ -34,7 +39,7 @@ fatorar(glc4)
 print('\n====> Saída:')
 glc4.display()
 
-leitor.arquivo = '../Testes/Fatoracao/fatoracao5.txt'
+leitor.arquivo = '../Testes/Fatoracao/teste5fatoracao.txt'
 glc5 = leitor.ler_arquivo()
 print(f"\n\n====> Fatoração para a GLC abaixo, lida do arquivo `{leitor.arquivo}`:")
 glc5.display()

@@ -1,6 +1,10 @@
+'''
+Testa reconhecimento de sentenças em autômatos finitos
+'''
+
 from Leitor import Leitor
 
-leitor = Leitor('../Testes/Reconhecimento_Sentenca/Automato1.txt')
+leitor = Leitor('../Testes/Reconhecimento_Sentenca/teste1reconhecimento_sentenca.txt')
 automato1 = leitor.ler_arquivo()
 print(f'\n\n====> Reconhecimento de sentença para o AF abaixo, lido do arquivo `{leitor.arquivo}`')
 automato1.display()
@@ -14,7 +18,7 @@ assert (automato1.reconhecer('aacbb') == True)
 assert (automato1.reconhecer('') == True)
 assert (automato1.reconhecer('aacbbb') == False)
 
-leitor.arquivo = '../Testes/Reconhecimento_Sentenca/Automato2.txt'
+leitor.arquivo = '../Testes/Reconhecimento_Sentenca/teste2reconhecimento_sentenca.txt'
 automato2 = leitor.ler_arquivo()
 print(f'\n\n====> Reconhecimento de sentença para o AF abaixo, lido do arquivo `{leitor.arquivo}`')
 automato2.display()
@@ -28,7 +32,7 @@ assert (automato2.reconhecer('bab') == True)
 assert (automato2.reconhecer('') == False)
 assert (automato2.reconhecer('bb') == False)
 
-leitor.arquivo = '../Testes/Reconhecimento_Sentenca/Automato3.txt'
+leitor.arquivo = '../Testes/Reconhecimento_Sentenca/teste3reconhecimento_sentenca.txt'
 automato3 = leitor.ler_arquivo()
 print(f'\n\n====> Reconhecimento de sentença para o AF abaixo, lido do arquivo `{leitor.arquivo}`')
 automato3.display()

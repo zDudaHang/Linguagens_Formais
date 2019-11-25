@@ -1,7 +1,11 @@
+'''
+Testa remoção de produções vazias e unitárias de gramáticas
+'''
+
 from Leitor import Leitor
 from src.operacoes_glc import remover_producoes_por_epsilon, remover_producoes_unitarias
 
-leitor = Leitor('../Testes/Producoes_Vazias/Vazio1.txt')
+leitor = Leitor('../Testes/Producoes_Vazias/teste1fnc.txt')
 glc1 = leitor.ler_arquivo()
 print(f'\n\nTestando remoção de produções vazias e unitárias para a GLC abaixo, lida do arquivo `{leitor.arquivo}`')
 glc1.display()
@@ -11,7 +15,7 @@ remover_producoes_unitarias(glc1)
 print('\n====> Saída:')
 glc1.display()
 
-leitor.arquivo = '../Testes/Producoes_Vazias/Vazio2.txt'
+leitor.arquivo = '../Testes/Producoes_Vazias/teste2fnc.txt'
 glc2 = leitor.ler_arquivo()
 print(f'\n\nTestando remoção de produções vazias e unitárias para a GLC abaixo, lida do arquivo `{leitor.arquivo}`')
 glc2.display()
@@ -20,7 +24,7 @@ remover_producoes_unitarias(glc2)
 print('\n====> Saída:')
 glc2.display()
 
-leitor.arquivo = '../Testes/Producoes_Vazias/Vazio3.txt'
+leitor.arquivo = '../Testes/Producoes_Vazias/teste3fnc.txt'
 glc3 = leitor.ler_arquivo()
 print(f'\n\nTestando remoção de produções vazias e unitárias para a GLC abaixo, lida do arquivo `{leitor.arquivo}`')
 glc3.display()
