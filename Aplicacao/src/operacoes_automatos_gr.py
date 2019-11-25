@@ -168,27 +168,6 @@ def gr_para_af(gr: GramaticaRegular):
 
     return AutomatoFinito(K, alfabeto, transicoes, q0, F)
 
-
-
-# def pegar_simbolos(prod, terminais, nao_terminais):
-#     terminal = None
-#     for t in terminais:
-#         if t in prod:
-#             terminal = t
-#             break
-#
-#     nao_terminal = None
-#     for nt in nao_terminais:
-#         if nt in prod:
-#             nao_terminal = nt
-#             break
-#
-#     e = False
-#     if '&' in prod:
-#         e = True
-#
-#     return terminal, nao_terminal, e
-
 # CONVERSAO DE UMA AR PARA UM AFD
 def er_para_afd(er: ExpressaoRegular):
     followpos = {i: set() for i in er.indexes}
@@ -245,24 +224,6 @@ def er_para_afd(er: ExpressaoRegular):
                           estados_aceitacao=estados_de_aceitacao,
                           transicoes=novas_transicoes)
 
-
-# def make_followpos(node: Nodo, followpos: dict):
-#     if node.eh_folha:
-#         return followpos
-#
-#     if node.tipo == Nodo.STAR:
-#         for i in node.firstpos:
-#             followpos[i] = followpos[i].union(node.secondpos)
-#
-#     elif node.tipo == Nodo.CAT:
-#         for i in node.c1.secondpos:
-#             followpos[i] = followpos[i].union(node.c2.firstpos)
-#
-#     followpos = make_followpos(node.c1, followpos)
-#     followpos = make_followpos(node.c2, followpos)
-#
-#     return followpos
-
 # MINIMIZACAO DE UM AUTOMATO FINITO DETERMINISTICO
 def minimizar(automato: AutomatoFinito):
     remover_inalcancaveis(automato)
@@ -290,30 +251,7 @@ def remover_inalcancaveis(automato: AutomatoFinito):
     automato.estados_aceitacao = intersecao_listas(automato.estados_aceitacao, alcancaveis)
     automato.transicoes = pegar_novas_transicoes(automato.transicoes, alcancaveis)
 
-# PEGA APENAS AS TRANSICOES DO AUTOMATO QUE ESTAO NA LISTA_ESTADOS
-# CASO CONTRARIO, COLOCA O VAZIO
-# def pegar_novas_transicoes(transicoes, lista_estados):
-#     novas_transicoes = {}
-#     for estado in lista_estados:
-#         transicao = transicoes[estado]
-#         novas_transicoes[estado] = []
-#         for estado_transicao in transicao:
-#             if estado_transicao in lista_estados:
-#                 novas_transicoes[estado].append(estado_transicao)
-#             else:
-#                 novas_transicoes[estado].append('V')
-#     return novas_transicoes
-
-# INTERSECAO ENTRE DUAS LISTAS
-# def intersecao(lista1, lista2):
-#     lista_intersecao = []
-#     for elemento in lista1:
-#         if elemento in lista2:
-#             lista_intersecao.append(elemento)
-#     return lista_intersecao
-
 # REMOCAO DOS ESTADOS MORTOS
-# =================================== ! VERIFICAR SE A MUDANCA AINDA O FAZ OPERANTE
 def remover_mortos(automato: AutomatoFinito):
     # vivos = automato.estados_aceitacao
     vivos = []
@@ -355,106 +293,3 @@ def remover_equivalentes(automato: AutomatoFinito):
             break
         k += 1
     print("Mapeamento[EstadosOriginais -> EstadosApósMinimização] = %s" % mapeamento)
-
-# def modificar_transicoes(P, k, automato):
-#     novos_estados = []
-#     novos_estados_de_aceitacao = []
-#     novas_transicoes = {}
-#
-#     # COLOCANDO O NOVO ESTADO INICIAL
-#     indice_estado_inicial = encontrar_indice(automato.estado_inicial, P[k])
-#     automato.estado_inicial = 'q' + str(indice_estado_inicial)
-#
-#     # INICIALIZANDO AS KEYS DAS NOVAS TRANSICOES
-#     for i in range(0,len(P[k])):
-#         estado_equivalente = 'q' + str(i)
-#         novas_transicoes[estado_equivalente] = []
-#
-#     # RETIRANDO TRANSICOES REDUNDANTES
-#     for i in range (0,len(P[k])):
-#         estado_equivalente = 'q' + str(i)
-#         novos_estados.append(estado_equivalente)
-#         estado = P[k][i][0]
-#         if estado in automato.estados_aceitacao:
-#             novos_estados_de_aceitacao.append(estado_equivalente)
-#         for j in range(0,len(automato.alfabeto)):
-#             transicao = automato.transicoes[estado][j]
-#             indice = encontrar_indice(transicao,P[k])
-#             if indice == -1:
-#                 novas_transicoes[estado_equivalente].append('V')
-#             else:
-#                 transicao_estado_equivalente = 'q' + str(indice)
-#                 novas_transicoes[estado_equivalente].append(transicao_estado_equivalente)
-#
-#     automato.estados = novos_estados
-#     automato.transicoes = novas_transicoes
-#     automato.estados_aceitacao = novos_estados_de_aceitacao
-
-# DIFERENCA ENTRE DUAS LISTAS
-# def diferenca(lista_1, lista_2):
-#     lista_diferenca = []
-#     for elemento in lista_1:
-#         if elemento not in lista_2:
-#             lista_diferenca.append(elemento)
-#     return lista_diferenca
-
-# PROCURANDO POR ESTADOS COM CLASSES DE EQUIVALENCIA DIFERENTES
-# def procurar_distinguiveis(P, k, particao, alfabeto, transicoes):
-#     mapeamento = {}
-#
-#     for i in range(0,len(P[k])):
-#         mapeamento[i] = []
-#
-#     # INDICE DO VAZIO
-#     mapeamento[-1] = []
-#
-#     for j in range(0,len(alfabeto)):
-#         limpar_mapeamento(mapeamento)
-#         for estado in particao:
-#             transicao = transicoes[estado][j]
-#             indice = encontrar_indice(transicao, P[k])
-#             mapeamento[indice].append(estado)
-#         if existem_distinguiveis(mapeamento):
-#             nova_particao = transformar_mapeamento_em_particao(mapeamento)
-#             # ADICIONA UM P[K+1]
-#             P.append([])
-#             # ADICIONA A NOVA PARTICAO A P[K+1]
-#             P[k+1].extend(nova_particao)
-#             P[k+1].extend(P[k])
-#             P[k+1].remove(particao)
-#             return True
-#
-#     # NAO ACHOU DISTINGUIVEIS
-#     return False
-
-# LIMPA O MAPEAMENTO MANTENDO AS KEYS
-# def limpar_mapeamento(mapeamento):
-#     for indice in mapeamento:
-#         mapeamento[indice] = []
-
-# TRANSFORMA O MAPEAMENTO DOS INDICES EM PARTICAO
-# def transformar_mapeamento_em_particao(mapeamento):
-#     particao = []
-#     for indice in mapeamento:
-#         if len(mapeamento[indice]) > 0:
-#             particao.append(mapeamento[indice])
-#     return particao
-
-# PROCURAR POR INDICES ONDE A LISTA NAO EH VAZIA
-# SE EXISTIR MAIS DE UM INDICE COM A LISTA NAO VAZIA
-# ENTAO EXISTEM CLASSES DE EQUIVALENCIA DIFERENTES PARA CADA INDICE
-# def existem_distinguiveis(mapeamento):
-#     quantidade_indices_nao_vazios = 0
-#     for indice in mapeamento:
-#         if len(mapeamento[indice]) > 0:
-#             quantidade_indices_nao_vazios += 1
-#     return (quantidade_indices_nao_vazios > 1)
-
-# PROCURAR O INDICE DE UM ESTADO EM UMA PARTICAO P[K]
-# def encontrar_indice(estado, Pk):
-#     indice = -1
-#     for i in range(0,len(Pk)):
-#         for estado_particao in Pk[i]:
-#             if estado_particao == estado:
-#                 return i
-#     return indice

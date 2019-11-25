@@ -1,0 +1,11 @@
+*GLC
+*NaoTerminais
+S A
+*Terminais
+0 1
+*SimboloInicial
+S
+*Producoes
+S->0A
+A->S1
+A->1
