@@ -170,6 +170,9 @@ def get_first_symbol(body, T, N):
         if body[: i + 1] in symbols:
             return body[: i + 1]
 
+    return body
+
+
 def calculate_follows(glc, firsts=None):
     '''
     Function to mount the FIRST of each symbol on a GLC
@@ -269,7 +272,7 @@ def calculate_follows(glc, firsts=None):
 # If A→αBβ, then everything in FIRST(β) except ε is in FOLLOW(B).
 def first_of_sequence(beta, firsts, symbols):
     first_sequence = set()
-    for i in range (0, len(symbols)):
+    for i in range(len(symbols)):
         if '&' not in firsts[symbols[i]]:
             first_sequence.update(firsts[symbols[i]])
             break
